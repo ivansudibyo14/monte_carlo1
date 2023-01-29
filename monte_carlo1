@@ -1,0 +1,60 @@
+import random
+import pandas as pd
+from statistics import mean, stddev
+
+def calculate_revenue(customers):
+    # Implement your logic for calculating revenue here
+    revenue = customers["sales"].sum()
+    return revenue
+
+def calculate_profit(customers):
+    # Implement your logic for calculating profit here
+    revenue = calculate_revenue(customers)
+    costs = customers["cost"].sum()
+    profit = revenue - costs
+    return profit
+
+def calculate_customer_retention(customers):
+    # Implement your logic for calculating customer retention here
+    num_retained_customers = customers.loc[customers["retention"] == True].shape[0]
+    retention_rate = num_retained_customers / customers.shape[0]
+    return retention_rate
+
+try:
+    # Load customer data into a DataFrame
+    customers = pd.read_csv("customer_data.csv")
+
+    # Define the number of simulations to run
+    num_simulations = 1000
+
+    # Initialize lists to store simulation results
+    revenue_results = []
+    profit_results = []
+    customer_retention_results = []
+
+    # Run the simulation
+    for i in range(num_simulations):
+        # Randomly select a subset of customers to simulate
+        simulated_customers = customers.sample(frac=0.8)
+        simulated_revenue = calculate_revenue(simulated_customers)
+        simulated_profit = calculate_profit(simulated_customers)
+        simulated_customer_retention = calculate_customer_retention(simulated_customers)
+        # Append results to the appropriate list
+        revenue_results.append(simulated_revenue)
+        profit_results.append(simulated_profit)
+        customer_retention_results.append(simulated_customer_retention)
+
+    # Print results
+    print("Revenue:")
+    print("Mean: ", round(mean(revenue_results), 2))
+    print("Standard Deviation: ", round(stddev(revenue_results), 2))
+
+    print("Profit:")
+    print("Mean: ", round(mean(profit_results), 2))
+    print("Standard Deviation: ", round(stddev(profit_results), 2))
+
+    print("Customer Retention:")
+    print("Mean: ", round(mean(customer_retention_results), 2))
+    print("Standard Deviation: ", round(stddev(customer_retention_results), 2))
+except FileNotFoundError:
+    print("Error: customer_data.csv not found. Please ensure the file is present in the script's directory.")
